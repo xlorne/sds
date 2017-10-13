@@ -3,6 +3,7 @@ package com.lorne.sds.server.service.impl;
 import com.lorne.sds.server.model.Server;
 import com.lorne.sds.server.service.DeliveryServerSendService;
 import com.lorne.sds.server.service.DeliveryService;
+import com.lorne.sds.server.service.RedisService;
 import io.netty.channel.ChannelHandlerContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -31,6 +33,9 @@ public class DeliveryServiceImpl implements DeliveryService {
     private RestTemplate restTemplate;
 
     @Autowired
+    private RedisService redisService;
+
+    @Autowired
     private DeliveryServerSendService deliveryServerSendService;
 
 
@@ -49,6 +54,34 @@ public class DeliveryServiceImpl implements DeliveryService {
                     }
                 }
             }
+        }
+    }
+
+    @Override
+    public void checkSocket() {
+        System.out.println("foreach");
+        List<ServiceInstance> instances =  discoveryClient.getInstances(SOCKET_SERVER_KEY);
+        for(ServiceInstance instance:instances){
+
+            String ip = instance.getHost();
+            int port = instance.getPort();
+            String ipPort = String.format("%s:%d",ip,port);
+
+            String resVal = restTemplate.getForObject(instance.getUri()+"/socket/index",String.class);
+
+            if(!"success".equals(resVal)){
+                redisService.removeAll(ipPort);
+            }
+
+            Set<String> values = redisService.all(ipPort);
+
+            for(String uniqueKey:values){
+                boolean res =  restTemplate.getForObject(instance.getUri()+"/socket/checkChannel?uniqueKey={uniqueKey}",Boolean.class,uniqueKey);
+                if(!res){
+                    redisService.remove(ipPort,uniqueKey);
+                }
+            }
+
         }
     }
 }

@@ -8,4 +8,7 @@ public interface DeliveryService {
 
     void delivery(ChannelHandlerContext ctx, Object msg);
 
+
+    void checkSocket();
+
 }

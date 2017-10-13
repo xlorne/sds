@@ -26,4 +26,15 @@ public class RedisServiceImpl implements RedisService {
         return redisTemplate.opsForSet().members(mkey);
     }
 
+    @Override
+    public void removeAll(String key) {
+        String mkey = prefix+key;
+        redisTemplate.delete(mkey);
+    }
+
+    @Override
+    public void remove(String key, String uniqueKey) {
+        String mkey = prefix+key;
+        redisTemplate.opsForSet().remove(mkey,uniqueKey);
+    }
 }

@@ -16,20 +16,22 @@ public class SocketController {
     @Autowired
     private ServerService serverService;
 
-    @ResponseBody
+    @RequestMapping(value = "/index",method = RequestMethod.GET)
+    public String index(){
+        return "success";
+    }
+
     @RequestMapping(value = "/getServer",method = RequestMethod.GET)
     public Server getServer(){
         return serverService.getServer();
     }
 
-    @ResponseBody
     @RequestMapping(value = "/checkChannel",method = RequestMethod.POST)
     public boolean checkChanel(@RequestParam("uniqueKey") String uniqueKey){
         return serverService.checkChannel(uniqueKey);
     }
 
 
-    @ResponseBody
     @RequestMapping(value = "/send",method = RequestMethod.POST)
     public boolean sendHexCmd(@RequestParam("uniqueKey")String uniqueKey,
                               @RequestParam("cmd")String cmd){

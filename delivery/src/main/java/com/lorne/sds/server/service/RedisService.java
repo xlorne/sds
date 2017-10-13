@@ -8,4 +8,9 @@ import java.util.Set;
 public interface RedisService {
 
     Set<String> all(String key);
+
+    void removeAll(String key);
+
+    void remove(String key, String uniqueKey);
+
 }
