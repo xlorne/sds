@@ -1,7 +1,5 @@
 package com.lorne.sds.server.listener;
 
-import com.lorne.sds.server.Constant;
-
 import com.lorne.sds.server.service.InitService;
 import com.lorne.sds.server.utils.SocketManager;
 import org.springframework.beans.factory.annotation.Value;
@@ -33,8 +31,6 @@ public class ServerListener implements ServletContextListener {
                 .getWebApplicationContext(event.getServletContext());
         initService = springContext.getBean(InitService.class);
         initService.start();
-
-        Constant.springContext = springContext;
 
         SocketManager.getInstance().setMaxConnection(maxConnection);
 
