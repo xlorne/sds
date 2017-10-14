@@ -1,5 +1,8 @@
 package com.lorne.sds.server.model;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+
 /**
  * create by lorne on 2017/9/21
  */
@@ -41,5 +44,10 @@ public class Server {
 
     public void setMaxCount(int maxCount) {
         this.maxCount = maxCount;
+    }
+
+    @Override
+    public String toString() {
+        return JSON.toJSONString(this);
     }
 }
