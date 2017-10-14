@@ -53,31 +53,34 @@ socket-demo 主要实现`SocketEventService`接口
 
     @Override
     public void onReadListener(ChannelHandlerContext ctx, String uniqueKey, Object msg) {
+        //读取数据事件
         System.out.println(msg);
     }
 
     @Override
     public void onConnectionListener(ChannelHandlerContext ctx, String uniqueKey) {
+        //连接服务事件
         System.out.println(uniqueKey);
     }
 
     @Override
     public void onDisConnectionListener(ChannelHandlerContext ctx, String uniqueKey) {
-
+        //断开连接事件
     }
 
     @Override
     public void onHeartNoWriteDataListener(ChannelHandlerContext ctx, String uniqueKey) {
-
+        //心跳写入超时监听
     }
 
     @Override
     public void onHeartNoReadDataListener(ChannelHandlerContext ctx, String uniqueKey) {
-
+        //心跳读取超时监听
     }
 
     @Override
     public boolean hasOpenHeartCheck() {
+        //是否开启心跳检查
         return true;
     }
 
