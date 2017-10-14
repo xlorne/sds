@@ -1,7 +1,7 @@
 package com.lorne.sds.server.service.impl;
 
 import com.lorne.sds.server.model.Server;
-import com.lorne.sds.server.service.DeliveryServerSendService;
+import com.lorne.sds.server.service.DeliveryServerSendEventService;
 import com.lorne.sds.server.service.DeliveryService;
 import com.lorne.sds.server.service.RedisService;
 import io.netty.channel.ChannelHandlerContext;
@@ -36,7 +36,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     private RedisService redisService;
 
     @Autowired
-    private DeliveryServerSendService deliveryServerSendService;
+    private DeliveryServerSendEventService deliveryServerSendEventService;
 
 
     @Override
@@ -50,7 +50,7 @@ public class DeliveryServiceImpl implements DeliveryService {
                 if (uri !=null ) {
                     Server server =  restTemplate.getForObject(uri+"/socket/getServer",Server.class);
                     if(server.getNowCount()<=server.getMaxCount()){
-                        deliveryServerSendService.delivery(ctx,server);
+                        deliveryServerSendEventService.onDeliveryListener(ctx,server);
                     }
                 }
             }

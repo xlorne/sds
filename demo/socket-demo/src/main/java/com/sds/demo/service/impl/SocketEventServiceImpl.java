@@ -12,27 +12,27 @@ public class SocketEventServiceImpl implements SocketEventService {
 
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, String uniqueKey, Object msg) {
+    public void onReadListener(ChannelHandlerContext ctx, String uniqueKey, Object msg) {
         System.out.println(msg);
     }
 
     @Override
-    public void channelActive(ChannelHandlerContext ctx, String uniqueKey) {
+    public void onConnectionListener(ChannelHandlerContext ctx, String uniqueKey) {
         System.out.println(uniqueKey);
     }
 
     @Override
-    public void channelInactive(ChannelHandlerContext ctx, String uniqueKey) {
+    public void onDisConnectionListener(ChannelHandlerContext ctx, String uniqueKey) {
 
     }
 
     @Override
-    public void heartNoWriteData(ChannelHandlerContext ctx, String uniqueKey) {
+    public void onHeartNoWriteDataListener(ChannelHandlerContext ctx, String uniqueKey) {
 
     }
 
     @Override
-    public void heartNoReadData(ChannelHandlerContext ctx, String uniqueKey) {
+    public void onHeartNoReadDataListener(ChannelHandlerContext ctx, String uniqueKey) {
 
     }
 

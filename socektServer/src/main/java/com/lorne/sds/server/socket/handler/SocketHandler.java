@@ -36,7 +36,7 @@ public class SocketHandler extends ChannelInboundHandlerAdapter {
             public void run() {
                 String uniqueKey = ctx.channel().remoteAddress().toString();
 
-                socketService.getSocketEventService().channelRead(ctx,uniqueKey,msg);
+                socketService.getSocketEventService().onReadListener(ctx,uniqueKey,msg);
             }
         });
 
@@ -52,7 +52,7 @@ public class SocketHandler extends ChannelInboundHandlerAdapter {
             //将数据存储到distribute下
             socketService.create(uniqueKey);
 
-            socketService.getSocketEventService().channelActive(ctx,uniqueKey);
+            socketService.getSocketEventService().onConnectionListener(ctx,uniqueKey);
 
         }else{
             ctx.close();
@@ -68,7 +68,7 @@ public class SocketHandler extends ChannelInboundHandlerAdapter {
         //将数据从distribute下异常
         socketService.remove(uniqueKey);
 
-        socketService.getSocketEventService().channelInactive(ctx,uniqueKey);
+        socketService.getSocketEventService().onDisConnectionListener(ctx,uniqueKey);
 
     }
 
@@ -81,12 +81,12 @@ public class SocketHandler extends ChannelInboundHandlerAdapter {
             if (event.state() == IdleState.READER_IDLE) {
                 //表示已经多久没有收到数据了
 
-                socketService.getSocketEventService().heartNoReadData(ctx,uniqueKey);
+                socketService.getSocketEventService().onHeartNoReadDataListener(ctx,uniqueKey);
 
             } else if (event.state() == IdleState.WRITER_IDLE) {
                 //表示已经多久没有发送数据了
 
-                socketService.getSocketEventService().heartNoWriteData(ctx,uniqueKey);
+                socketService.getSocketEventService().onHeartNoWriteDataListener(ctx,uniqueKey);
 
             } else if (event.state() == IdleState.ALL_IDLE) {
                 //表示已经多久既没有收到也没有发送数据了
