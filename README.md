@@ -22,13 +22,91 @@ demo    演示案例
 框架将delivery与socketServer均以第三方库的方式做的封装。再使用时只需要依赖他们就可以。
 
 
-## demo演示
+## demo说明
 
 详细请下载demo文件夹下的代码。
 
-socketServer主要实现`SocketEventService`接口
+请现在sds源码分别对delivery与socketServer执行clean install 安装jar。
 
-delivery主要实现`DeliveryServerSendEventService`接口
+
+````
+        <dependency>
+            <groupId>com.lorne.sds</groupId>
+            <artifactId>socket-server</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        
+        
+        
+        <dependency>
+            <groupId>com.lorne.sds</groupId>
+            <artifactId>delivery</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+````
+
+主要业务实现
+
+socket-demo 主要实现`SocketEventService`接口
+
+````
+
+    @Override
+    public void onReadListener(ChannelHandlerContext ctx, String uniqueKey, Object msg) {
+        System.out.println(msg);
+    }
+
+    @Override
+    public void onConnectionListener(ChannelHandlerContext ctx, String uniqueKey) {
+        System.out.println(uniqueKey);
+    }
+
+    @Override
+    public void onDisConnectionListener(ChannelHandlerContext ctx, String uniqueKey) {
+
+    }
+
+    @Override
+    public void onHeartNoWriteDataListener(ChannelHandlerContext ctx, String uniqueKey) {
+
+    }
+
+    @Override
+    public void onHeartNoReadDataListener(ChannelHandlerContext ctx, String uniqueKey) {
+
+    }
+
+    @Override
+    public boolean hasOpenHeartCheck() {
+        return true;
+    }
+
+````
+
+delivery-demo 主要实现`DeliveryServerSendEventService`接口
+
+
+
+````
+@Service
+public class DeliveryServerSendEventServiceImpl implements DeliveryServerSendEventService {
+
+
+
+    @Autowired
+    private DeliveryServerService deliveryServerService;
+
+
+    @Override
+    public void onDeliveryListener(ChannelHandlerContext ctx, Object msg) {
+        //获取服务
+        Server server =  deliveryServerService.getOkServer();
+        //发送信息
+        SocketUtils.send(ctx.channel(),server.toString().getBytes());
+    }
+}
+
+````
 
 
 
@@ -37,3 +115,5 @@ delivery主要实现`DeliveryServerSendEventService`接口
 框架依赖eureka和redis，在启动项目之前要确保这两个服务已开启。
 
 然后在运行两个demo。
+
+demo配置请参看`application.properties`的参数说明

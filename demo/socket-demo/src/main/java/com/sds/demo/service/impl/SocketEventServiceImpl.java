@@ -38,6 +38,6 @@ public class SocketEventServiceImpl implements SocketEventService {
 
     @Override
     public boolean hasOpenHeartCheck() {
-        return false;
+        return true;
     }
 }
