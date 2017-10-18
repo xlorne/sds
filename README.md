@@ -27,7 +27,7 @@ demo    演示案例
 
 详细请下载demo文件夹下的代码
 
-首先要按照jar，在sds源码下分别对delivery与socketServer执行clean install 安装jar
+首先要安装jar，在sds源码下分别对delivery与socketServer执行clean install 安装jar
 
 
 ````
