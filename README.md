@@ -21,6 +21,7 @@ demo    演示案例
 
 框架将delivery与socketServer均以第三方库的方式做的封装。再使用时只需要依赖他们就可以。
 
+框架还依赖了lorne_core 和 lorne_exception.代码可通过我的项目下查找。
 
 ## demo说明
 
