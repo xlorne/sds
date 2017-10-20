@@ -8,14 +8,6 @@
     <artifactId>delivery-demo</artifactId>
     <version>1.0-SNAPSHOT</version>
 
-    <repositories>
-        <repository>
-            <id>lorne</id>
-            <url>https://1991wangliang.github.io/repository</url>
-        </repository>
-    </repositories>
-
-
 
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -39,7 +31,6 @@
             <artifactId>delivery</artifactId>
             <version>1.0.0</version>
         </dependency>
-
 
 
         <dependency>
