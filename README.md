@@ -16,35 +16,36 @@
 ## 目录介绍
 
 delivery 分发服务库   
-socketServer socket通讯服务库  
-demo    演示案例  
+socket   socket通讯服务库  
+demo     演示案例  
 
-框架将delivery与socketServer均以第三方库的方式做的封装。再使用时只需要依赖他们就可以。
+框架将delivery与socketServer均以第三方库的方式做的封装。在使用时只需要依赖他们就可以。
 
-框架还依赖了lorne_core 和 lorne_exception.代码可在我的项目下查找。
+
+
+````
+        //分发服务maven
+        <dependency>
+           <groupId>com.github.1991wangliang</groupId>
+           <artifactId>lorne_sds_delivery</artifactId>
+           <version>1.0.0</version>
+        </dependency>
+        
+        
+        //socket服务maven
+        <dependency>
+           <groupId>com.github.1991wangliang</groupId>
+           <artifactId>lorne_sds_socket</artifactId>
+           <version>1.0.0</version>
+        </dependency>
+````
+
+
 
 ## demo说明
 
+
 详细请下载demo文件夹下的代码
-
-首先要安装jar，在sds源码下分别对delivery与socketServer执行clean install 安装jar
-
-
-````
-        <dependency>
-            <groupId>com.lorne.sds</groupId>
-            <artifactId>socket-server</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-        
-        
-        
-        <dependency>
-            <groupId>com.lorne.sds</groupId>
-            <artifactId>delivery</artifactId>
-            <version>1.0.0</version>
-        </dependency>
-````
 
 主要业务实现
 

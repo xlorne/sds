@@ -26,9 +26,10 @@
 
     <dependencies>
 
+
         <dependency>
-            <groupId>com.lorne.sds</groupId>
-            <artifactId>delivery</artifactId>
+            <groupId>com.github.1991wangliang</groupId>
+            <artifactId>lorne_sds_delivery</artifactId>
             <version>1.0.0</version>
         </dependency>
 
