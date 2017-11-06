@@ -6,7 +6,7 @@
 
     <groupId>com.github.1991wangliang</groupId>
     <artifactId>lorne_sds_socket</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>lorne_sds_socket</name>
     <description>sds socket framework</description>
     <url>https://github.com/1991wangliang/sds</url>

@@ -31,4 +31,9 @@ public class EurekaRegistrationServiceImpl implements EurekaRegistrationService 
     public String getInstanceId() {
         return registration.getInstanceConfig().getInstanceId();
     }
+
+    @Override
+    public String getModelName() {
+        return getIpPort();
+    }
 }
