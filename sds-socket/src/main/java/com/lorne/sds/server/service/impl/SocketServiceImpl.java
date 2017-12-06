@@ -1,9 +1,11 @@
 package com.lorne.sds.server.service.impl;
 
-import com.lorne.sds.server.service.EurekaRegistrationService;
-import com.lorne.sds.server.service.RedisService;
+import com.lorne.sds.server.mq.DeliveryClient;
+import com.lorne.sds.server.service.SocketControl;
 import com.lorne.sds.server.service.SocketEventService;
 import com.lorne.sds.server.service.SocketService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +15,13 @@ import org.springframework.stereotype.Service;
 @Service
 public class SocketServiceImpl implements SocketService {
 
-    @Autowired
-    private EurekaRegistrationService eurekaRegistrationService;
+    private Logger logger = LoggerFactory.getLogger(SocketServiceImpl.class);
 
     @Autowired
-    private RedisService redisService;
+    private SocketControl eurekaRegistrationService;
+
+    @Autowired
+    private DeliveryClient deliveryClient;
 
     @Autowired
     private SocketEventService socketEventService;
@@ -25,13 +29,16 @@ public class SocketServiceImpl implements SocketService {
     @Override
     public void create(String uniqueKey) {
         String modelName =  eurekaRegistrationService.getIpPort();
-        redisService.add(modelName,uniqueKey);
+        deliveryClient.add(modelName,uniqueKey);
+        logger.info("deliveryClient-add --> modelName:"+modelName+",uniqueKey:"+uniqueKey);
     }
 
     @Override
     public void remove(String uniqueKey) {
         String modelName =  eurekaRegistrationService.getIpPort();
-        redisService.remove(modelName,uniqueKey);
+        deliveryClient.remove(modelName,uniqueKey);
+
+        logger.info("deliveryClient-remove --> modelName:"+modelName+",uniqueKey:"+uniqueKey);
     }
 
     @Override

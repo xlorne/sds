@@ -1,6 +1,6 @@
 package com.sds.demo.service.impl;
 
-import com.lorne.sds.server.service.EurekaRegistrationService;
+import com.lorne.sds.server.service.SocketControl;
 import com.lorne.sds.server.service.SocketEventService;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 public class SocketEventServiceImpl implements SocketEventService {
 
     @Autowired
-    private EurekaRegistrationService eurekaRegistrationService;
+    private SocketControl eurekaRegistrationService;
 
     private Logger logger = LoggerFactory.getLogger(SocketEventServiceImpl.class);
 

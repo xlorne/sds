@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8"/>
+    <title>SDS V1.2.0</title>
+    <!-- 最新版本的 Bootstrap 核心 CSS 文件 -->
+    <link rel="stylesheet" href="static/bootstrap/css/bootstrap.min.css"/>
+    <script src="static/jquery/jquery.min.js"></script>
+    <script src="static/jquery/jquery.blockUI.min.js"></script>
+    <script src="static/jquery/jquery.blockUI-css.js"></script>
+    <script src="static/common/common.js"></script>
+    <script src="static/common/http.js"></script>
+    <link rel="shortcut icon" href="static/images/logo.png">
+
+    <style>
+        .container{
+            margin-top:20px;
+        }
+        .table-responsive{
+            margin-top:30px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <h3 class="text-center">SDS V1.2.0 服务已启动</h3>
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+            <colgroup>
+                <col class="col-xs-4"/>
+                <col class="col-xs-8"/>
+            </colgroup>
+            <thead>
+            <tr>
+                <th>属性名称</th>
+                <th>属性值</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <th scope="row">
+                    Socket对外服务IP
+                </th>
+                <td><span id="ip"></span></td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    Socket对外服务端口
+                </th>
+                <td><span id="port"></span></td>
+            </tr>
+            <tr>
+                <th scope="row">
+                    redis服务状态
+                </th>
+                <td><span id="testRedis"></span></td>
+            </tr>
+
+            <tr>
+                <th scope="row">
+                    delivery负载均衡模块
+                </th>
+                <td><span id="deliverys"></span></td>
+            </tr>
+
+            <tr>
+                <th scope="row">
+                    socket负载均衡模块
+                </th>
+                <td><span id="sockets"></span></td>
+            </tr>
+
+            </tbody>
+        </table>
+
+
+        <a href="model.html" style="margin-left: 20px;" class="btn btn-info pull-right">在线设备</a>
+
+    </div>
+
+
+    <script src="static/index.js"></script>
+</div>
+</body>
+</html>

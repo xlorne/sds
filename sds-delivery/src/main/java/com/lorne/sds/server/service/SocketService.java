@@ -7,5 +7,17 @@ import com.lorne.core.framework.exception.ServiceException;
  */
 public interface SocketService {
 
-    boolean send(String modelName, String uniqueKey, String cmd) throws ServiceException;
+    boolean sendHexCmd(String modelName, String uniqueKey, String cmd) throws ServiceException;
+
+
+    boolean sendBase64Cmd(String modelName, String uniqueKey, String cmd) throws ServiceException;
+
+
+    boolean sendStrCmd(String modelName, String uniqueKey, String cmd) throws ServiceException;
+
+    boolean sendHexCmdByKey(String key, String cmd) throws ServiceException;
+
+    boolean sendBase64CmdByKey(String key, String cmd) throws ServiceException;
+
+    boolean sendStrCmdByKey(String key, String cmd) throws ServiceException;
 }

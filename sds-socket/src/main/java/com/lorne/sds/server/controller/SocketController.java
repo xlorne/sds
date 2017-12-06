@@ -32,10 +32,23 @@ public class SocketController {
     }
 
 
-    @RequestMapping(value = "/send",method = RequestMethod.POST)
+    @RequestMapping(value = "/sendHexCmd",method = RequestMethod.POST)
     public boolean sendHexCmd(@RequestParam("uniqueKey")String uniqueKey,
                               @RequestParam("cmd")String cmd){
-        return serverService.sendCmd(uniqueKey,cmd);
+        return serverService.sendHexCmd(uniqueKey,cmd);
+    }
+
+
+    @RequestMapping(value = "/sendBase64Cmd",method = RequestMethod.POST)
+    public boolean sendBase64Cmd(@RequestParam("uniqueKey")String uniqueKey,
+                              @RequestParam("cmd")String cmd){
+        return serverService.sendBase64Cmd(uniqueKey,cmd);
+    }
+
+    @RequestMapping(value = "/sendStrCmd",method = RequestMethod.POST)
+    public boolean sendStrCmd(@RequestParam("uniqueKey")String uniqueKey,
+                                 @RequestParam("cmd")String cmd){
+        return serverService.sendStrCmd(uniqueKey,cmd);
     }
 
 }

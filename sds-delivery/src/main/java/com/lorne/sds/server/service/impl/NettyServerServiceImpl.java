@@ -1,8 +1,9 @@
 package com.lorne.sds.server.service.impl;
 
 
-import com.lorne.sds.server.service.NettyServerService;
 import com.lorne.sds.server.service.DeliveryService;
+import com.lorne.sds.server.service.NettyServerService;
+import com.lorne.sds.server.service.SettingService;
 import com.lorne.sds.server.socket.DeliveryHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
@@ -18,7 +19,6 @@ import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
@@ -35,9 +35,8 @@ public class NettyServerServiceImpl implements NettyServerService {
     private ServerBootstrap b;
 
 
-    @Value("${distribute.port}")
-    private int port;
-
+    @Autowired
+    private SettingService settingService;
 
     private int heartTime = 5;
 
@@ -76,9 +75,9 @@ public class NettyServerServiceImpl implements NettyServerService {
                     .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
 
             // Bind and start to accept incoming connections.
-            b.bind(port);
+            b.bind(settingService.getDeliveryPort());
 
-            logger.info("socket: "+port+" starting....");
+            logger.info("socket: "+settingService.getDeliveryPort()+" starting....");
             // Wait until the server socket is closed.
             // In this example, this does not happen, but you can do that to gracefully
         } catch (Exception e) {

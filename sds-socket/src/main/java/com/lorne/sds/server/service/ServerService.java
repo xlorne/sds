@@ -14,12 +14,12 @@ public interface ServerService {
     Server getServer();
 
     /**
-     * 发送指令
+     * 发送指令 (16进制字符串)
      * @param uniqueKey 管道唯一标示
      * @param cmd   指令内容
      * @return  是否成功 true成功，false失败
      */
-    boolean sendCmd(String uniqueKey, String cmd);
+    boolean sendHexCmd(String uniqueKey, String cmd);
 
     /**
      * 检查连接
@@ -28,4 +28,19 @@ public interface ServerService {
      */
     boolean checkChannel(String uniqueKey);
 
+    /**
+     * 发送指令 (base64字符串)
+     * @param uniqueKey 管道唯一标示
+     * @param cmd       指令内容
+     * @return 是否成功 true成功，false失败
+     */
+    boolean sendBase64Cmd(String uniqueKey, String cmd);
+
+    /**
+     * 发送指令 (string字符串)
+     * @param uniqueKey 管道唯一标示
+     * @param cmd       指令内容
+     * @return 是否成功 true成功，false失败
+     */
+    boolean sendStrCmd(String uniqueKey, String cmd);
 }

@@ -1,7 +1,9 @@
 package com.lorne.sds.server.service.impl;
 
+import com.lorne.core.framework.utils.encode.Base64Utils;
 import com.lorne.sds.server.model.Server;
 import com.lorne.sds.server.service.ServerService;
+import com.lorne.sds.server.utils.ByteUtils;
 import com.lorne.sds.server.utils.SocketManager;
 import com.lorne.sds.server.utils.SocketUtils;
 import io.netty.channel.Channel;
@@ -36,8 +38,21 @@ public class ServerServiceImpl implements ServerService {
 
 
     @Override
-    public boolean sendCmd(String uniqueKey, String cmd) {
-        SocketUtils.send(uniqueKey,cmd.getBytes());
+    public boolean sendHexCmd(String uniqueKey, String cmd) {
+        SocketUtils.send(uniqueKey, ByteUtils.fromHexAscii(cmd));
+        return true;
+    }
+
+
+    @Override
+    public boolean sendBase64Cmd(String uniqueKey, String cmd) {
+        SocketUtils.send(uniqueKey, Base64Utils.decode(cmd));
+        return true;
+    }
+
+    @Override
+    public boolean sendStrCmd(String uniqueKey, String cmd) {
+        SocketUtils.send(uniqueKey, cmd.getBytes());
         return true;
     }
 

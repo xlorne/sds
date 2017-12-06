@@ -1,6 +1,8 @@
 package com.lorne.sds.server.service.impl;
 
 import com.lorne.core.framework.exception.ServiceException;
+import com.lorne.sds.server.model.SocketModel;
+import com.lorne.sds.server.service.OnlineService;
 import com.lorne.sds.server.service.SocketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,10 +18,46 @@ public class SocketServiceImpl implements SocketService {
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
+    private OnlineService onlineService;
+
 
     @Override
-    public boolean send(String modelName, String uniqueKey, String cmd) throws ServiceException {
-        String url = "http://"+modelName+"/socket/send";
+    public boolean sendHexCmd(String modelName, String uniqueKey, String cmd) throws ServiceException {
+        String url = "http://"+modelName+"/socket/sendHexCmd";
         return restTemplate.postForObject(url+"?uniqueKey={uniqueKey}&cmd={cmd}",null,Boolean.class,uniqueKey,cmd);
+    }
+
+
+    @Override
+    public boolean sendBase64Cmd(String modelName, String uniqueKey, String cmd) throws ServiceException {
+        String url = "http://"+modelName+"/socket/sendBase64Cmd";
+        return restTemplate.postForObject(url+"?uniqueKey={uniqueKey}&cmd={cmd}",null,Boolean.class,uniqueKey,cmd);
+    }
+
+
+    @Override
+    public boolean sendStrCmd(String modelName, String uniqueKey, String cmd) throws ServiceException {
+        String url = "http://"+modelName+"/socket/sendStrCmd";
+        return restTemplate.postForObject(url+"?uniqueKey={uniqueKey}&cmd={cmd}",null,Boolean.class,uniqueKey,cmd);
+    }
+
+
+    @Override
+    public boolean sendHexCmdByKey(String key, String cmd) throws ServiceException{
+        SocketModel socketModel =  onlineService.getModelByKey(key);
+        return sendHexCmd(socketModel.getModelName(),socketModel.getUniqueKey(),cmd);
+    }
+
+    @Override
+    public boolean sendBase64CmdByKey(String key, String cmd)throws ServiceException {
+        SocketModel socketModel =  onlineService.getModelByKey(key);
+        return sendBase64Cmd(socketModel.getModelName(),socketModel.getUniqueKey(),cmd);
+    }
+
+    @Override
+    public boolean sendStrCmdByKey(String key, String cmd)throws ServiceException {
+        SocketModel socketModel =  onlineService.getModelByKey(key);
+        return sendStrCmd(socketModel.getModelName(),socketModel.getUniqueKey(),cmd);
     }
 }
