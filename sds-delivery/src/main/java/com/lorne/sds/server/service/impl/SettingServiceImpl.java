@@ -37,6 +37,10 @@ public class SettingServiceImpl implements SettingService{
     private int deliveryPort;
 
 
+    @Value("${delivery.check.time}")
+    private int maxCheckTime;
+
+
     @Autowired
     private EurekaClient eurekaClient;
 
@@ -100,5 +104,10 @@ public class SettingServiceImpl implements SettingService{
         model.setDeliverys(getServices("delivery"));
         model.setSockets(getServices("socket-server"));
         return model;
+    }
+
+    @Override
+    public int getCheckTime() {
+        return maxCheckTime;
     }
 }

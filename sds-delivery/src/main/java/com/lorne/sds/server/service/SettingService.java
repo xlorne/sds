@@ -16,4 +16,6 @@ public interface SettingService {
 
     DeliveryModel loadSetting();
 
+    int getCheckTime();
+
 }

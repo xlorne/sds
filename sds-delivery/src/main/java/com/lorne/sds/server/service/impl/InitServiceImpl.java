@@ -4,6 +4,9 @@ package com.lorne.sds.server.service.impl;
 import com.lorne.sds.server.service.DeliveryService;
 import com.lorne.sds.server.service.NettyServerService;
 import com.lorne.sds.server.service.InitService;
+import com.lorne.sds.server.service.SettingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,14 +26,28 @@ public class InitServiceImpl implements InitService {
     private DeliveryService deliveryService;
 
 
+    @Autowired
+    private SettingService settingService;
+
+
+    private Logger logger = LoggerFactory.getLogger(InitServiceImpl.class);
+
+
     private Timer timer = new Timer();
 
-
-    private static final int maxDelayTime = 1000*60*10;
+    //默认 10分钟
+    private static final int defaultDelayTime = 10;
 
     @Override
     public void start() {
         nettyServerService.start();
+
+        int checkTime = settingService.getCheckTime();
+        if(checkTime<=0){
+            checkTime = defaultDelayTime;
+        }
+
+        logger.info("init ->start,check time(min):"+checkTime);
 
         timer.schedule(new TimerTask() {
             @Override
@@ -41,11 +58,14 @@ public class InitServiceImpl implements InitService {
                     e.printStackTrace();
                 }
             }
-        },maxDelayTime,maxDelayTime);
+        },1000*10,checkTime*(1000*60));
     }
 
     @Override
     public void close() {
+
+        timer.cancel();
+
         nettyServerService.close();
     }
 }

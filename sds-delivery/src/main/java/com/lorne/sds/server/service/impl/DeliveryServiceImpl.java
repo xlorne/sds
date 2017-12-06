@@ -5,6 +5,8 @@ import com.lorne.sds.server.service.DeliveryServerService;
 import com.lorne.sds.server.service.DeliveryService;
 import com.lorne.sds.server.service.RedisService;
 import io.netty.channel.ChannelHandlerContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -35,6 +37,8 @@ public class DeliveryServiceImpl implements DeliveryService {
     private DeliveryServerSendEventService deliveryServerSendEventService;
 
 
+    private Logger logger = LoggerFactory.getLogger(DeliveryServiceImpl.class);
+
     @Override
     public void delivery(ChannelHandlerContext ctx, Object msg) {
         deliveryServerSendEventService.onDeliveryListener(ctx,msg);
@@ -53,6 +57,7 @@ public class DeliveryServiceImpl implements DeliveryService {
 
     @Override
     public void checkSocket() {
+        logger.info("check - socket server start ");
         List<ServiceInstance> instances =  discoveryClient.getInstances(DeliveryServerService.SOCKET_SERVER_KEY);
         for(ServiceInstance instance:instances){
 
@@ -60,16 +65,24 @@ public class DeliveryServiceImpl implements DeliveryService {
             int port = instance.getPort();
             String ipPort = String.format("%s:%d",ip,port);
 
+            logger.info("check - server:"+ipPort+" start ");
+
             String resVal = restTemplate.getForObject(instance.getUri()+"/socket/index",String.class);
+
+            logger.info("check - server:"+ipPort+" end ,res->"+resVal);
 
             if(!"success".equals(resVal)){
                 redisService.removeAll(ipPort);
+
+                logger.info("remove -> server:"+ipPort );
             }
 
             Set<String> values = redisService.all(ipPort);
 
             for(String uniqueKey:values){
-                boolean res =  restTemplate.getForObject(instance.getUri()+"/socket/checkChannel?uniqueKey={uniqueKey}",Boolean.class,uniqueKey);
+                logger.info("checkChannel -> server:"+ipPort +",uniqueKey->"+uniqueKey+" start .");
+                boolean res =  restTemplate.postForObject(instance.getUri()+"/socket/checkChannel?uniqueKey={uniqueKey}",uniqueKey,Boolean.class,uniqueKey);
+                logger.info("checkChannel -> server:"+ipPort +",uniqueKey->"+uniqueKey+" end . res->"+res);
                 if(!res){
                     redisService.remove(ipPort,uniqueKey);
                 }
