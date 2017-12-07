@@ -15,14 +15,14 @@ import org.springframework.stereotype.Service;
 public class SocketEventServiceImpl implements SocketEventService {
 
     @Autowired
-    private SocketControl eurekaRegistrationService;
+    private SocketControl socketControl;
 
     private Logger logger = LoggerFactory.getLogger(SocketEventServiceImpl.class);
 
     @Override
     public void onReadListener(ChannelHandlerContext ctx, String uniqueKey, Object msg) {
 
-        String modelName = eurekaRegistrationService.getModelName();
+        String modelName = socketControl.getModelName();
 
         logger.info("onReadListener--> modelName->"+modelName+",uniqueKey->"+uniqueKey+",msg->"+msg);
 
@@ -30,14 +30,14 @@ public class SocketEventServiceImpl implements SocketEventService {
 
     @Override
     public void onConnectionListener(ChannelHandlerContext ctx, String uniqueKey) {
-        String modelName = eurekaRegistrationService.getModelName();
+        String modelName = socketControl.getModelName();
 
         logger.info("onConnectionListener--> modelName->"+modelName+",uniqueKey->"+uniqueKey);
     }
 
     @Override
     public void onDisConnectionListener(ChannelHandlerContext ctx, String uniqueKey) {
-        String modelName = eurekaRegistrationService.getModelName();
+        String modelName = socketControl.getModelName();
 
         logger.info("onDisConnectionListener--> modelName->"+modelName+",uniqueKey->"+uniqueKey);
     }
