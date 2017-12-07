@@ -30,7 +30,7 @@
         <dependency>
             <groupId>com.github.1991wangliang</groupId>
             <artifactId>sds-delivery</artifactId>
-            <version>1.2.0</version>
+            <version>1.2.1</version>
             <exclusions>
                 <exclusion>
                     <groupId>org.slf4j</groupId>
