@@ -20,7 +20,7 @@ public interface DeliveryClient {
     boolean remove(@RequestParam("modelName") String modelName,@RequestParam("uniqueKey") String uniqueKey);
 
 
-    @RequestMapping(value = "/putKey",method = RequestMethod.POST)
+    @RequestMapping(value = "/online/putKey",method = RequestMethod.POST)
     boolean putKey(@RequestParam("modelName") String modelName,@RequestParam("uniqueKey") String uniqueKey,@RequestParam("key") String key);
 
 }
