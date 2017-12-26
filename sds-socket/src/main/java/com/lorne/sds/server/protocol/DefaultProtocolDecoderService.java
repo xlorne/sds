@@ -17,7 +17,7 @@ public class DefaultProtocolDecoderService implements ProtocolDecoderService{
     @Override
     public void decode(ChannelHandlerContext ctx, byte[] msg, List<Object> out) throws Exception {
 
-        logger.info("DefaultProtocolDecoderService-->decode");
+        logger.debug("DefaultProtocolDecoderService-->decode");
 
         out.add(msg);
     }

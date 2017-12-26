@@ -1,6 +1,7 @@
 package com.lorne.sds.server.service.impl;
 
 import com.lorne.sds.server.service.NettyServerService;
+import com.lorne.sds.server.service.SocketService;
 import com.lorne.sds.server.socket.SocketServerChannelInitializer;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelOption;
@@ -13,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 
 /**
@@ -21,6 +23,18 @@ import org.springframework.stereotype.Service;
 @Service
 public class NettyServerServiceImpl implements NettyServerService {
 
+    @Value("${netty.port}")
+    private int port;
+
+    @Value("${netty.heartTime}")
+    private int heartTime;
+
+    @Autowired
+    private SocketService socketService;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
 
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
@@ -28,12 +42,6 @@ public class NettyServerServiceImpl implements NettyServerService {
     private ServerBootstrap b;
 
 
-    @Value("${netty.port}")
-    private int port;
-
-
-    @Autowired
-    private SocketServerChannelInitializer socketServerChannelInitializer;
 
 
     private Logger logger = LoggerFactory.getLogger(NettyServerServiceImpl.class);
@@ -49,7 +57,7 @@ public class NettyServerServiceImpl implements NettyServerService {
                     .channel(NioServerSocketChannel.class)
                     .option(ChannelOption.SO_BACKLOG, 100)
                     .handler(new LoggingHandler(LogLevel.INFO))
-                    .childHandler(socketServerChannelInitializer);
+                    .childHandler(new SocketServerChannelInitializer(heartTime,socketService,applicationContext));
             // Bind and start to accept incoming connections.
             b.bind(port);
 

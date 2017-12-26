@@ -10,12 +10,12 @@ import io.netty.channel.Channel;
 public class SocketUtils {
 
 
-    public static void send(final String uniqueKey, final byte[] data) {
+    public static void send( String uniqueKey, final byte[] data) {
         Channel ctx =  SocketManager.getInstance().getChannelByUniqueKey(uniqueKey);
         send(ctx,data);
     }
 
-    public static void send(final Channel ctx, final byte[] data) {
+    public static void send( Channel ctx, final byte[] data) {
         if (ctx == null)
             return;
         final ByteBuf byteBufMsg = ctx.alloc().buffer(data.length);

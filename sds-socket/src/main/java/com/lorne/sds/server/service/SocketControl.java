@@ -77,4 +77,13 @@ public interface SocketControl {
     String getKey(ChannelHandlerContext ctx);
 
 
+    /**
+     * 重置心跳时间
+     * @param ctx   当前连接对象
+     * @param heartTime 心跳时间(秒)
+     */
+    void resetHeartTime(Channel ctx,int heartTime);
+
+
+
 }

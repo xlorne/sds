@@ -17,7 +17,7 @@ public class DefaultProtocolEncoderService implements ProtocolEncoderService{
     @Override
     public void encode(ChannelHandlerContext ctx, byte[] msg, List<Object> out) throws Exception {
 
-        logger.info("DefaultProtocolEncoderService-->encode");
+        logger.debug("DefaultProtocolEncoderService-->encode");
 
         out.add(Unpooled.buffer().writeBytes(msg));
     }

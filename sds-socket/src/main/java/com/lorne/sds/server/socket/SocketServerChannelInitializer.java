@@ -16,10 +16,7 @@ import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
@@ -27,28 +24,36 @@ import java.util.concurrent.TimeUnit;
  * create by lorne on 2017/12/26
  */
 
-@Component
 public class SocketServerChannelInitializer extends ChannelInitializer<SocketChannel> {
 
 
+    public final static String ByteArrayDecoder = "ByteArrayDecoder";
+    public final static String ByteArrayEncoder = "ByteArrayEncoder";
+    public final static String LengthFieldBasedFrameDecoder = "LengthFieldBasedFrameDecoder";
+    public final static String ProtocolDecoderHandler = "ProtocolDecoderHandler";
+    public final static String ProtocolEncoderHandler = "ProtocolEncoderHandler";
+    public final static String SystemTimeOut = "SystemTimeOut";
+    public final static String SocketHandler = "SocketHandler";
 
-    @Value("${netty.heartTime}")
-    private int heartTime = 10;
+    private static Logger logger = LoggerFactory.getLogger(SocketServerChannelInitializer.class);
 
-    @Autowired
+
+    private int heartTime;
     private SocketService socketService;
-
-
-    @Autowired
     private ApplicationContext applicationContext;
 
 
-    private Logger logger = LoggerFactory.getLogger(this.getClass());
+    public SocketServerChannelInitializer(int heartTime, SocketService socketService, ApplicationContext applicationContext) {
+        this.heartTime = heartTime;
+        this.socketService = socketService;
+        this.applicationContext = applicationContext;
+    }
+
 
     @Override
     protected void initChannel(SocketChannel ch) throws Exception {
 
-        logger.info("initChannel-start");
+        logger.debug("initChannel-start");
 
         ProtocolDecoderService protocolDecoderService = null;
         ProtocolEncoderService protocolEncoderService = null;
@@ -62,21 +67,26 @@ public class SocketServerChannelInitializer extends ChannelInitializer<SocketCha
             protocolEncoderService = new DefaultProtocolEncoderService();
         }
 
-        logger.info("initChannel->protocolDecoderService:"+protocolDecoderService);
-        logger.info("initChannel->protocolEncoderService:"+protocolEncoderService);
+        logger.debug("initChannel->protocolDecoderService:"+protocolDecoderService);
+        logger.debug("initChannel->protocolEncoderService:"+protocolEncoderService);
 
 
-        ch.pipeline().addLast(new ByteArrayDecoder());
-        ch.pipeline().addLast(new ByteArrayEncoder());
+        ch.pipeline().addLast(ByteArrayDecoder,new ByteArrayDecoder());
+        ch.pipeline().addLast(ByteArrayEncoder,new ByteArrayEncoder());
 
-        ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 1, 1, 0, 0));
+        ch.pipeline().addLast(LengthFieldBasedFrameDecoder,new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 1, 1, 0, 0));
 
-        ch.pipeline().addLast(new ProtocolDecoderHandler(protocolDecoderService));
-        ch.pipeline().addLast(new ProtocolEncoderHandler(protocolEncoderService));
+        ch.pipeline().addLast(ProtocolDecoderHandler,new ProtocolDecoderHandler(protocolDecoderService));
+        ch.pipeline().addLast(ProtocolEncoderHandler,new ProtocolEncoderHandler(protocolEncoderService));
 
-        ch.pipeline().addLast(new IdleStateHandler(heartTime, heartTime, heartTime, TimeUnit.SECONDS));
-        ch.pipeline().addLast(new SocketHandler(socketService));
 
-        logger.info("initChannel-end");
+        ch.pipeline().addLast(SystemTimeOut,new IdleStateHandler(heartTime, heartTime, heartTime, TimeUnit.SECONDS));
+
+        ch.pipeline().addLast(SocketHandler,new SocketHandler(socketService));
+
+        logger.debug("initChannel-end");
     }
+
+
+
 }

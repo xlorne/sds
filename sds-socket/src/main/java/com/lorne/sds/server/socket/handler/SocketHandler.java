@@ -61,14 +61,13 @@ public class SocketHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
-        SocketManager.getInstance().removeClient(ctx.channel());
-
         String uniqueKey = ctx.channel().remoteAddress().toString();
+        socketService.getSocketEventService().onDisConnectionListener(ctx,uniqueKey);
+
+        SocketManager.getInstance().removeClient(ctx.channel());
 
         //将数据从distribute下异常
         socketService.remove(uniqueKey);
-
-        socketService.getSocketEventService().onDisConnectionListener(ctx,uniqueKey);
 
     }
 

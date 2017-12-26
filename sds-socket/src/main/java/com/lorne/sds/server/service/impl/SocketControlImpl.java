@@ -2,13 +2,17 @@ package com.lorne.sds.server.service.impl;
 
 import com.lorne.sds.server.mq.DeliveryClient;
 import com.lorne.sds.server.service.SocketControl;
+import com.lorne.sds.server.socket.SocketServerChannelInitializer;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.netflix.eureka.serviceregistry.EurekaRegistration;
 import org.springframework.stereotype.Service;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  * create by lorne on 2017/10/13
@@ -96,5 +100,12 @@ public class SocketControlImpl implements SocketControl {
         return getKey(ctx.channel());
     }
 
+
+
+    @Override
+    public void resetHeartTime(Channel ctx,int heartTime){
+        ctx.pipeline().remove(SocketServerChannelInitializer.SystemTimeOut);
+        ctx.pipeline().addBefore(SocketServerChannelInitializer.SocketHandler,SocketServerChannelInitializer.SystemTimeOut,new IdleStateHandler(heartTime, heartTime, heartTime, TimeUnit.SECONDS));
+    }
 
 }
