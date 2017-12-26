@@ -2,7 +2,6 @@ package com.sds.demo.service.impl;
 
 import com.lorne.sds.server.service.SocketControl;
 import com.lorne.sds.server.service.SocketEventService;
-import com.lorne.sds.server.utils.SocketUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
