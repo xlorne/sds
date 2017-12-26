@@ -8,13 +8,11 @@ import com.lorne.sds.server.socket.DeliveryHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.codec.LengthFieldPrepender;
 import io.netty.handler.codec.bytes.ByteArrayDecoder;
 import io.netty.handler.codec.bytes.ByteArrayEncoder;
 import io.netty.handler.timeout.IdleStateHandler;
@@ -63,17 +61,14 @@ public class NettyServerServiceImpl implements NettyServerService {
                         @Override
                         public void initChannel(SocketChannel ch) throws Exception {
 
-                            ChannelPipeline pipeline = ch.pipeline();
-                            //  pipeline.addLast(new StringDecoder());
-                            pipeline.addLast(new ByteArrayDecoder());
-                            pipeline.addLast("timeout", new IdleStateHandler(heartTime, heartTime, heartTime, TimeUnit.SECONDS));
+                            ch.pipeline().addLast(new ByteArrayDecoder());
+                            ch.pipeline().addLast(new ByteArrayEncoder());
 
-                            ch.pipeline().addLast(new LengthFieldPrepender(4, false));
-                            ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
+                            ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 1, 1, 0, 0));
 
-                            pipeline.addLast(new DeliveryHandler(deliveryService));
-                            pipeline.addLast(new ByteArrayEncoder());
-                            //pipeline.addLast(new StringEncoder());
+                            ch.pipeline().addLast(new IdleStateHandler(heartTime, heartTime, heartTime, TimeUnit.SECONDS));
+
+                            ch.pipeline().addLast(new DeliveryHandler(deliveryService));
 
                         }
                     })

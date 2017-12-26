@@ -22,10 +22,12 @@ public class SocketEventServiceImpl implements SocketEventService {
     @Override
     public void onReadListener(ChannelHandlerContext ctx, String uniqueKey, Object msg) {
 
+        byte[] datas = (byte[]) msg;
+
         String modelName = socketControl.getModelName();
+        logger.info("onReadListener--> modelName->"+modelName+",uniqueKey->"+uniqueKey+",msg->"+new String(datas));
 
-        logger.info("onReadListener--> modelName->"+modelName+",uniqueKey->"+uniqueKey+",msg->"+msg);
-
+        ctx.writeAndFlush(datas);
     }
 
     @Override

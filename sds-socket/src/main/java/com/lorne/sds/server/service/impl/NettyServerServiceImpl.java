@@ -1,28 +1,19 @@
 package com.lorne.sds.server.service.impl;
 
 import com.lorne.sds.server.service.NettyServerService;
-import com.lorne.sds.server.service.SocketService;
-import com.lorne.sds.server.socket.handler.SocketHandler;
+import com.lorne.sds.server.socket.SocketServerChannelInitializer;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.handler.codec.bytes.ByteArrayDecoder;
-import io.netty.handler.codec.bytes.ByteArrayEncoder;
-import io.netty.handler.timeout.IdleStateHandler;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by lorne on 2017/4/12.
@@ -33,6 +24,7 @@ public class NettyServerServiceImpl implements NettyServerService {
 
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
+
     private ServerBootstrap b;
 
 
@@ -41,11 +33,7 @@ public class NettyServerServiceImpl implements NettyServerService {
 
 
     @Autowired
-    private SocketService socketService;
-
-
-    @Value("${netty.heartTime}")
-    private int heartTime = 10;
+    private SocketServerChannelInitializer socketServerChannelInitializer;
 
 
     private Logger logger = LoggerFactory.getLogger(NettyServerServiceImpl.class);
@@ -58,28 +46,10 @@ public class NettyServerServiceImpl implements NettyServerService {
         try {
             b = new ServerBootstrap(); // (2)
             b.group(bossGroup, workerGroup)
-                    .channel(NioServerSocketChannel.class) // (3)
-                    .childHandler(new ChannelInitializer<SocketChannel>() { // (4)
-                        @Override
-                        public void initChannel(SocketChannel ch) throws Exception {
-
-                            ChannelPipeline pipeline = ch.pipeline();
-                            //  pipeline.addLast(new StringDecoder());
-                            pipeline.addLast(new ByteArrayDecoder());
-                            pipeline.addLast("timeout", new IdleStateHandler(heartTime, heartTime, heartTime, TimeUnit.SECONDS));
-
-                            ch.pipeline().addLast(new LengthFieldPrepender(4, false));
-                            ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
-
-                            pipeline.addLast(new SocketHandler(socketService));
-                            pipeline.addLast(new ByteArrayEncoder());
-                            //pipeline.addLast(new StringEncoder());
-
-                        }
-                    })
-                    .option(ChannelOption.SO_BACKLOG, 128)          // (5)
-                    .childOption(ChannelOption.SO_KEEPALIVE, true); // (6)
-
+                    .channel(NioServerSocketChannel.class)
+                    .option(ChannelOption.SO_BACKLOG, 100)
+                    .handler(new LoggingHandler(LogLevel.INFO))
+                    .childHandler(socketServerChannelInitializer);
             // Bind and start to accept incoming connections.
             b.bind(port);
 

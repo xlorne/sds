@@ -1,14 +1,13 @@
-package com.lorne.sds.server.utils;
+package com.sds.demo.utils;
 
-/**
- * create by lorne on 2017/12/6
- */
 
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 
 public final class ByteUtils {
+
+    private static final char[] HEX_CHARS = new char[]{'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'};
     public final static short UNSIGNED_MAX_VALUE = (Byte.MAX_VALUE * 2) + 1;
 
     public static short toUnsigned(byte b) {
@@ -21,20 +20,34 @@ public final class ByteUtils {
         return sw.toString();
     }
 
-    public static byte[] byteMerger(byte[] byte_1, byte[] byte_2) {
-        byte[] byte_3 = new byte[byte_1.length + byte_2.length];
-        System.arraycopy(byte_1, 0, byte_3, 0, byte_1.length);
-        System.arraycopy(byte_2, 0, byte_3, byte_1.length, byte_2.length);
-        return byte_3;
-    }
-
-
     public static String toHexAscii(byte[] bytes) {
         int len = bytes.length;
         StringWriter sw = new StringWriter(len * 2);
         for (int i = 0; i < len; ++i)
             addHexAscii(bytes[i], sw);
         return sw.toString();
+    }
+
+
+    public static String toHexString(byte[] var0) {
+        String var1 = "";
+
+        for (int var2 = 0; var2 < var0.length; ++var2) {
+            var1 = var1 + HEX_CHARS[var0[var2] >>> 4 & 15];
+            var1 = var1 + HEX_CHARS[var0[var2] & 15];
+        }
+
+        return var1;
+    }
+
+    public static byte[] reverse(byte[] bytes) {
+        int len = bytes.length;
+        byte[] newBytes = new byte[len];
+        for (int i = 0; i < len; i++) {
+            newBytes[i] = bytes[len - 1 - i];
+        }
+
+        return newBytes;
     }
 
     public static byte[] fromHexAscii(String s) throws NumberFormatException {
@@ -57,6 +70,47 @@ public final class ByteUtils {
         }
     }
 
+
+    public static byte[] fromHexString(String var0) {
+        char[] var1 = var0.toUpperCase().toCharArray();
+        int var2 = 0;
+
+        for (int var3 = 0; var3 < var1.length; ++var3) {
+            if (var1[var3] >= 48 && var1[var3] <= 57 || var1[var3] >= 65 && var1[var3] <= 70) {
+                ++var2;
+            }
+        }
+
+        byte[] var6 = new byte[var2 + 1 >> 1];
+        int var4 = var2 & 1;
+
+        for (int var5 = 0; var5 < var1.length; ++var5) {
+            if (var1[var5] >= 48 && var1[var5] <= 57) {
+                var6[var4 >> 1] = (byte) (var6[var4 >> 1] << 4);
+                var6[var4 >> 1] = (byte) (var6[var4 >> 1] | var1[var5] - 48);
+            } else {
+                if (var1[var5] < 65 || var1[var5] > 70) {
+                    continue;
+                }
+
+                var6[var4 >> 1] = (byte) (var6[var4 >> 1] << 4);
+                var6[var4 >> 1] = (byte) (var6[var4 >> 1] | var1[var5] - 65 + 10);
+            }
+
+            ++var4;
+        }
+
+        return var6;
+    }
+
+    public static byte[] byteMerger(byte[] byte_1, byte[] byte_2) {
+        byte[] byte_3 = new byte[byte_1.length + byte_2.length];
+        System.arraycopy(byte_1, 0, byte_3, 0, byte_1.length);
+        System.arraycopy(byte_2, 0, byte_3, byte_1.length, byte_2.length);
+        return byte_3;
+    }
+
+
     static void addHexAscii(byte b, StringWriter sw) {
         short ub = toUnsigned(b);
         int h1 = ub / 16;
@@ -77,8 +131,8 @@ public final class ByteUtils {
     }
 
     /* note: we do no arg. checking, because     */
-    /* we only ever call this from addHexAscii() */
-    /* above, and we are sure the args are okay  */
+  /* we only ever call this from addHexAscii() */
+  /* above, and we are sure the args are okay  */
     private static char toHexDigit(int h) {
         char out;
         if (h <= 9) out = (char) (h + 0x30);
