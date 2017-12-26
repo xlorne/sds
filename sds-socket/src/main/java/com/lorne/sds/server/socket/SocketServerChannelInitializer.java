@@ -74,7 +74,7 @@ public class SocketServerChannelInitializer extends ChannelInitializer<SocketCha
         ch.pipeline().addLast(ByteArrayDecoder,new ByteArrayDecoder());
         ch.pipeline().addLast(ByteArrayEncoder,new ByteArrayEncoder());
 
-        ch.pipeline().addLast(LengthFieldBasedFrameDecoder,new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 1, 1, 0, 0));
+        ch.pipeline().addLast(LengthFieldBasedFrameDecoder,new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
 
         ch.pipeline().addLast(ProtocolDecoderHandler,new ProtocolDecoderHandler(protocolDecoderService));
         ch.pipeline().addLast(ProtocolEncoderHandler,new ProtocolEncoderHandler(protocolEncoderService));

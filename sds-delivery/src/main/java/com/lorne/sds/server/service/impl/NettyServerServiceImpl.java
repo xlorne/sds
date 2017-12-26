@@ -64,7 +64,7 @@ public class NettyServerServiceImpl implements NettyServerService {
                             ch.pipeline().addLast(new ByteArrayDecoder());
                             ch.pipeline().addLast(new ByteArrayEncoder());
 
-                            ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 1, 1, 0, 0));
+                            ch.pipeline().addLast(new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE, 0, 4, 0, 4));
 
                             ch.pipeline().addLast(new IdleStateHandler(heartTime, heartTime, heartTime, TimeUnit.SECONDS));
 
