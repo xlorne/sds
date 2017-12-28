@@ -54,9 +54,14 @@ public class SocketHandler extends ChannelInboundHandlerAdapter {
             String uniqueKey = ctx.channel().remoteAddress().toString();
 
             //将数据存储到distribute下
-            socketService.create(uniqueKey);
+            try {
+                socketService.create(uniqueKey);
 
-            socketService.getSocketEventService().onConnectionListener(ctx,uniqueKey);
+                socketService.getSocketEventService().onConnectionListener(ctx, uniqueKey);
+            }catch (Exception e){
+                logger.error("error - connection - > "+e.getMessage());
+                ctx.close();
+            }
 
         }else{
 
@@ -76,9 +81,12 @@ public class SocketHandler extends ChannelInboundHandlerAdapter {
 
         SocketManager.getInstance().removeClient(ctx.channel());
 
-        //将数据从distribute下异常
-        socketService.remove(uniqueKey);
-
+        try {
+            //将数据从distribute下异常
+            socketService.remove(uniqueKey);
+        }catch (Exception e){
+            logger.error("error - disconnection - > "+e.getMessage());
+        }
     }
 
     @Override

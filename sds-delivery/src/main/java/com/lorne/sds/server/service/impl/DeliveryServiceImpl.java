@@ -1,9 +1,7 @@
 package com.lorne.sds.server.service.impl;
 
-import com.lorne.sds.server.service.DeliveryServerSendEventService;
-import com.lorne.sds.server.service.DeliveryServerService;
-import com.lorne.sds.server.service.DeliveryService;
-import com.lorne.sds.server.service.RedisService;
+import com.lorne.sds.server.service.*;
+import com.lorne.sds.server.utils.TelnetUtils;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +34,15 @@ public class DeliveryServiceImpl implements DeliveryService {
     @Autowired
     private DeliveryServerSendEventService deliveryServerSendEventService;
 
+    @Autowired
+    private AdminService adminService;
+
 
     private Logger logger = LoggerFactory.getLogger(DeliveryServiceImpl.class);
 
     @Override
     public void delivery(ChannelHandlerContext ctx, Object msg) {
-        deliveryServerSendEventService.onDeliveryListener(ctx,msg);
+        deliveryServerSendEventService.onDeliveryListener(ctx, msg);
     }
 
 
@@ -55,39 +56,84 @@ public class DeliveryServiceImpl implements DeliveryService {
         deliveryServerSendEventService.onDisConnectionListener(ctx);
     }
 
+
+    private ServiceInstance getInstance(String ipPort) {
+        List<ServiceInstance> instances = discoveryClient.getInstances(DeliveryServerService.SOCKET_SERVER_KEY);
+        for (ServiceInstance instance : instances) {
+            String ip = instance.getHost();
+            int port = instance.getPort();
+            String instancesIpPort = String.format("%s:%d", ip, port);
+            if (instancesIpPort.equals(ipPort)) {
+                return instance;
+            }
+        }
+        return null;
+    }
+
+
     @Override
     public void checkSocket() {
         logger.info("check - socket server start ");
-        List<ServiceInstance> instances =  discoveryClient.getInstances(DeliveryServerService.SOCKET_SERVER_KEY);
-        for(ServiceInstance instance:instances){
 
-            String ip = instance.getHost();
-            int port = instance.getPort();
-            String ipPort = String.format("%s:%d",ip,port);
+        List<String> onlines = adminService.models();
 
-            logger.info("check - server:"+ipPort+" start ");
+        for (String ipPort : onlines) {
+            String ip = ipPort.split(":")[0];
+            int port = Integer.parseInt(ipPort.split(":")[1]);
 
-            String resVal = restTemplate.getForObject(instance.getUri()+"/socket/index",String.class);
+            boolean telnetState = TelnetUtils.telnet(ip, port);
 
-            logger.info("check - server:"+ipPort+" end ,res->"+resVal);
+            if (telnetState) {
+                ServiceInstance serviceInstance = getInstance(ipPort);
+                if (serviceInstance == null) {
+                    try {
+                        Thread.sleep(1000 * 10);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    serviceInstance = getInstance(ipPort);
 
-            if(!"success".equals(resVal)){
-                redisService.removeAll(ipPort);
-
-                logger.info("remove -> server:"+ipPort );
-            }
-
-            Set<String> values = redisService.all(ipPort);
-
-            for(String uniqueKey:values){
-                logger.info("checkChannel -> server:"+ipPort +",uniqueKey->"+uniqueKey+" start .");
-                boolean res =  restTemplate.postForObject(instance.getUri()+"/socket/checkChannel?uniqueKey={uniqueKey}",uniqueKey,Boolean.class,uniqueKey);
-                logger.info("checkChannel -> server:"+ipPort +",uniqueKey->"+uniqueKey+" end . res->"+res);
-                if(!res){
-                    redisService.remove(ipPort,uniqueKey);
                 }
-            }
+                logger.info("ipPort -> "+ipPort+" serviceInstance->:" + serviceInstance);
 
+                if (serviceInstance != null) {
+                    logger.info("check - server:" + ipPort + " start ");
+
+                    try {
+                        String resVal = restTemplate.getForObject(serviceInstance.getUri() + "/socket/index", String.class);
+                        if (!"success".equals(resVal)) {
+                            redisService.removeAll(ipPort);
+
+                            logger.info("remove -> server:" + ipPort);
+                        }
+                    }catch (Exception e){
+                        logger.error("error--> remove -> server:" + ipPort+", exp->"+e.getMessage());
+                        redisService.removeAll(ipPort);
+
+                        continue;
+                    }
+
+                    Set<String> values = redisService.all(ipPort);
+
+                    for (String uniqueKey : values) {
+                        logger.info("checkChannel -> server:" + ipPort + ",uniqueKey->" + uniqueKey + " start .");
+                        try {
+                            boolean res = restTemplate.postForObject(serviceInstance.getUri() + "/socket/checkChannel?uniqueKey={uniqueKey}", uniqueKey, Boolean.class, uniqueKey);
+                            logger.info("checkChannel -> server:" + ipPort + ",uniqueKey->" + uniqueKey + " end . res->" + res);
+                            if (!res) {
+                                redisService.remove(ipPort, uniqueKey);
+                            }
+                        }catch (Exception e){
+                            logger.error("error--> remove checkChannel -> server:" + ipPort+", exp->"+e.getMessage());
+                            redisService.remove(ipPort, uniqueKey);
+                        }
+                    }
+                }
+
+            } else {
+                redisService.removeAll(ipPort);
+            }
         }
+        logger.info("check - socket server end");
     }
 }
