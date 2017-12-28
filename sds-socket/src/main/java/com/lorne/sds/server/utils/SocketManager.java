@@ -24,7 +24,7 @@ public class SocketManager {
     /**
      * 允许连接请求 true允许 false拒绝
      */
-    private boolean allowConnection = true;
+    private volatile boolean allowConnection = true;
 
     private Map<String,Channel> clients = null;
 
@@ -57,7 +57,7 @@ public class SocketManager {
 
         nowConnection = clients.size();
 
-        allowConnection = (nowConnection >= maxConnection );
+        allowConnection = (nowConnection <= maxConnection );
     }
 
     public void removeClient(Channel client) {
@@ -67,7 +67,7 @@ public class SocketManager {
 
         nowConnection = clients.size();
 
-        allowConnection = (nowConnection >= maxConnection);
+        allowConnection = (nowConnection <= maxConnection);
     }
 
 
