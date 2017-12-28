@@ -7,6 +7,8 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.timeout.IdleState;
 import io.netty.handler.timeout.IdleStateEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -17,6 +19,7 @@ import java.util.concurrent.Executors;
  */
 public class SocketHandler extends ChannelInboundHandlerAdapter {
 
+    private Logger logger = LoggerFactory.getLogger(SocketHandler.class);
 
     private Executor threadPool = Executors.newFixedThreadPool(100);
 
@@ -45,6 +48,7 @@ public class SocketHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelActive(ChannelHandlerContext ctx) throws Exception {
         if(SocketManager.getInstance().isAllowConnection()){
+            logger.info("connection - > "+ctx);
             SocketManager.getInstance().addClient(ctx.channel());
 
             String uniqueKey = ctx.channel().remoteAddress().toString();
@@ -55,12 +59,18 @@ public class SocketHandler extends ChannelInboundHandlerAdapter {
             socketService.getSocketEventService().onConnectionListener(ctx,uniqueKey);
 
         }else{
+
+            logger.info("not allow connection - > "+ctx+
+                    ",nowConnectionSize->"+SocketManager.getInstance().getNowConnection()+
+                    ",maxConnectionSize->"+SocketManager.getInstance().getMaxConnection());
+
             ctx.close();
         }
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        logger.info("disconnection - > "+ctx);
         String uniqueKey = ctx.channel().remoteAddress().toString();
         socketService.getSocketEventService().onDisConnectionListener(ctx,uniqueKey);
 

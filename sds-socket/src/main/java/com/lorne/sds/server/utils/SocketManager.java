@@ -57,7 +57,7 @@ public class SocketManager {
 
         nowConnection = clients.size();
 
-        allowConnection = (maxConnection != nowConnection);
+        allowConnection = (nowConnection >= maxConnection );
     }
 
     public void removeClient(Channel client) {
@@ -67,7 +67,7 @@ public class SocketManager {
 
         nowConnection = clients.size();
 
-        allowConnection = (maxConnection != nowConnection);
+        allowConnection = (nowConnection >= maxConnection);
     }
 
 
