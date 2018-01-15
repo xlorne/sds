@@ -28,6 +28,11 @@ public class OnlineController {
         return onlineService.remove(modelName, uniqueKey);
     }
 
+    @RequestMapping(value = "/check",method = RequestMethod.POST)
+    public boolean check(@RequestParam("key") String key){
+        return onlineService.check(key);
+    }
+
 
     @RequestMapping(value = "/putKey",method = RequestMethod.POST)
     public boolean putKey(@RequestParam("modelName") String modelName,@RequestParam("uniqueKey") String uniqueKey,@RequestParam("key") String key){

@@ -37,6 +37,16 @@ public class OnLineServiceImpl implements OnlineService{
         return true;
     }
 
+
+    @Override
+    public boolean check(String key) {
+        String val = redisService.getModelByKey(key);
+        if(StringUtils.isEmpty(val)){
+            return false;
+        }
+        return true;
+    }
+
     @Override
     public SocketModel getModelByKey(String key) throws ServiceException {
 

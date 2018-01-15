@@ -15,4 +15,6 @@ public interface OnlineService {
     boolean putKey(String modelName, String uniqueKey, String key);
 
     SocketModel getModelByKey(String key) throws ServiceException;
+
+    boolean check(String key);
 }
