@@ -2,7 +2,6 @@ package com.lorne.sds.server.service.impl;
 
 import com.lorne.sds.server.model.Server;
 import com.lorne.sds.server.service.DeliveryServerService;
-import com.lorne.sds.server.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
@@ -10,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -48,4 +48,24 @@ public class DeliveryServerServiceImpl implements DeliveryServerService {
         return null;
     }
 
+
+    @Override
+    public List<Server> serverList() {
+        List<ServiceInstance> serviceInstances =  discoveryClient.getInstances(SOCKET_SERVER_KEY);
+
+        List<Server> servers = new ArrayList<>();
+
+        //选取socket服务
+        if (serviceInstances != null && serviceInstances.size() > 0 ) {
+            for(ServiceInstance instance : serviceInstances){
+                URI uri = instance.getUri();
+                if (uri !=null ) {
+                    Server server =  restTemplate.getForObject(uri+"/socket/getServer",Server.class);
+                    servers.add(server);
+                }
+            }
+        }
+
+        return servers;
+    }
 }
