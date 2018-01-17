@@ -23,6 +23,9 @@ public class ServerServiceImpl implements ServerService {
     @Value(value = "${netty.ip}")
     private String ip;
 
+    @Value(value = "${netty.tag}")
+    private String tag;
+
 
     @Override
     public Server getServer() {
@@ -33,6 +36,8 @@ public class ServerServiceImpl implements ServerService {
 
         server.setIp(ip);
         server.setPort(port);
+        server.setTag(tag);
+
         return server;
     }
 

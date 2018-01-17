@@ -11,8 +11,17 @@ public class Server {
     private String ip;
     private int port;
 
+    private String tag;
     private int nowCount;
     private int maxCount;
+
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 
     public String getIp() {
         return ip;
