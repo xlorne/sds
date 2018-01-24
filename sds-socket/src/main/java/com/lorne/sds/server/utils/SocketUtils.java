@@ -9,6 +9,15 @@ import io.netty.channel.Channel;
  */
 public class SocketUtils {
 
+    public interface IBack{
+        void doing(Channel ctx, byte[] data);
+    }
+
+    private static IBack back;
+
+    public static void setBack(IBack newBack){
+        back = newBack;
+    }
 
     public static void send( String uniqueKey, final byte[] data) {
         Channel ctx =  SocketManager.getInstance().getChannelByUniqueKey(uniqueKey);
@@ -18,6 +27,9 @@ public class SocketUtils {
     public static void send( Channel ctx, final byte[] data) {
         if (ctx == null)
             return;
+        if(back!=null){
+            back.doing(ctx,data);
+        }
         final ByteBuf byteBufMsg = ctx.alloc().buffer(data.length);
         byteBufMsg.writeBytes(data);
         ctx.writeAndFlush(byteBufMsg);
