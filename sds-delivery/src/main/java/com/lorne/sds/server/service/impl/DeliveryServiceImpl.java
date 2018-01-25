@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.netflix.eureka.EurekaDiscoveryClient;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -60,7 +61,7 @@ public class DeliveryServiceImpl implements DeliveryService {
     private ServiceInstance getInstance(String ipPort) {
         List<ServiceInstance> instances = discoveryClient.getInstances(DeliveryServerService.SOCKET_SERVER_KEY);
         for (ServiceInstance instance : instances) {
-            String ip = instance.getHost();
+            String ip = ((EurekaDiscoveryClient.EurekaServiceInstance) instance).getInstanceInfo().getIPAddr();
             int port = instance.getPort();
             String instancesIpPort = String.format("%s:%d", ip, port);
             if (instancesIpPort.equals(ipPort)) {

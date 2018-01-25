@@ -69,9 +69,9 @@ public class RedisServiceImpl implements RedisService {
         ValueOperations<String, String> operations = redisTemplate.opsForValue();
         String key = operations.get(mkey);
         String mval = operations.get(key_prefix + key);
-        //if(val.equals(mval)) {
+        if(val.equals(mval)) {
             redisTemplate.delete(key_prefix + key);
-        //}
+        }
         redisTemplate.delete(mkey);
     }
 
