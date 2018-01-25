@@ -10,9 +10,6 @@ import io.netty.handler.timeout.IdleStateEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
-
 
 /**
  * Created by lorne on 2017/8/12.
@@ -21,7 +18,6 @@ public class SocketHandler extends ChannelInboundHandlerAdapter {
 
     private Logger logger = LoggerFactory.getLogger(SocketHandler.class);
 
-    private Executor threadPool = Executors.newFixedThreadPool(100);
 
     private SocketService socketService;
 
@@ -34,14 +30,9 @@ public class SocketHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(final ChannelHandlerContext ctx,final Object msg) { // (2)
         // Discard the received data silently.
-        threadPool.execute(new Runnable() {
-            @Override
-            public void run() {
-                String uniqueKey = ctx.channel().remoteAddress().toString();
+        String uniqueKey = ctx.channel().remoteAddress().toString();
 
-                socketService.getSocketEventService().onReadListener(ctx,uniqueKey,msg);
-            }
-        });
+        socketService.getSocketEventService().onReadListener(ctx,uniqueKey,msg);
 
     }
 
