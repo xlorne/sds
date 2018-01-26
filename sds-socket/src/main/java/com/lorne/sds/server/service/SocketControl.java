@@ -36,6 +36,7 @@ public interface SocketControl {
 
     /**
      * 模块下连接的标示
+     * @param channel 管道对象
      * @return uk
      */
     String getUniqueKey(Channel channel);
@@ -43,6 +44,7 @@ public interface SocketControl {
 
     /**
      * 模块下连接的标示
+     * @param ctx 管道对象
      * @return uk
      */
     String getUniqueKey(ChannelHandlerContext ctx);

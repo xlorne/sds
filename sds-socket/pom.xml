@@ -5,7 +5,7 @@
 
     <groupId>com.github.1991wangliang</groupId>
     <artifactId>sds-socket</artifactId>
-    <version>1.2.4</version>
+    <version>1.2.5</version>
     <name>sds_socket</name>
     <description>sds socket framework</description>
     <url>https://github.com/1991wangliang/sds</url>
@@ -72,7 +72,7 @@
         <dependency>
             <groupId>io.netty</groupId>
             <artifactId>netty-all</artifactId>
-            <version>4.1.12.Final</version>
+            <version>4.1.19.Final</version>
         </dependency>
 
 
