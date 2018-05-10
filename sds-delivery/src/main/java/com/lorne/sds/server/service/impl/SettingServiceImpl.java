@@ -3,14 +3,11 @@ package com.lorne.sds.server.service.impl;
 import com.lorne.sds.server.model.DeliveryModel;
 import com.lorne.sds.server.service.RedisService;
 import com.lorne.sds.server.service.SettingService;
-import com.netflix.appinfo.InstanceInfo;
-import com.netflix.discovery.EurekaClient;
-import com.netflix.discovery.shared.Application;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.netflix.eureka.serviceregistry.EurekaRegistration;
+import org.springframework.cloud.client.ServiceInstance;
+import org.springframework.cloud.client.discovery.DiscoveryClient;
+import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,13 +21,15 @@ import java.util.regex.Pattern;
 @Service
 public class SettingServiceImpl implements SettingService{
 
-    private Logger logger = LoggerFactory.getLogger(SettingServiceImpl.class);
 
     @Autowired
-    private EurekaRegistration registration;
+    private DiscoveryClient discoveryClient;
 
     @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private Registration registration;
 
 
     @Value("${delivery.port}")
@@ -41,22 +40,9 @@ public class SettingServiceImpl implements SettingService{
     private int maxCheckTime;
 
 
-    @Autowired
-    private EurekaClient eurekaClient;
-
-    public List<InstanceInfo> getConfigServiceInstances(String key) {
-        Application application = eurekaClient.getApplication(key);
-        if (application == null) {
-            logger.error("获取eureka服务失败！");
-        }
-        return application!=null?application.getInstances():new ArrayList<InstanceInfo>();
-    }
-
-
-
     @Override
     public String getDeliveryIp() {
-        return registration.getInstanceConfig().getIpAddress();
+        return registration.getHost();
     }
 
     @Override
@@ -81,10 +67,10 @@ public class SettingServiceImpl implements SettingService{
 
     private List<String> getServices(String key){
         List<String> urls = new ArrayList<>();
-        List<InstanceInfo> instanceInfos =getConfigServiceInstances(key);
-        for (InstanceInfo instanceInfo : instanceInfos) {
-            String url = instanceInfo.getHomePageUrl();
-            String address = instanceInfo.getIPAddr();
+        List<ServiceInstance> serviceInstances =  discoveryClient.getInstances(key);
+        for (ServiceInstance instanceInfo : serviceInstances) {
+            String url = instanceInfo.getUri().toString();
+            String address = instanceInfo.getHost();
             if (isIp(address)) {
                 urls.add(url);
             }else{

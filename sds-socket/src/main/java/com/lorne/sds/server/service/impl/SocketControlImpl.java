@@ -9,7 +9,7 @@ import io.netty.handler.timeout.IdleStateHandler;
 import io.netty.util.Attribute;
 import io.netty.util.AttributeKey;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cloud.netflix.eureka.serviceregistry.EurekaRegistration;
+import org.springframework.cloud.client.serviceregistry.Registration;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.TimeUnit;
@@ -20,22 +20,22 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class SocketControlImpl implements SocketControl {
 
-
     private AttributeKey attributeKey = AttributeKey.valueOf(SocketControlImpl.class.getName());
 
-    @Autowired
-    private EurekaRegistration registration;
 
     @Autowired
     private DeliveryClient deliveryClient;
+
+    @Autowired
+    private Registration registration;
 
     private String ipPort = null;
 
     @Override
     public String getIpPort() {
         if(ipPort==null) {
-            String ipAddress = registration.getInstanceConfig().getIpAddress();
-            int port = registration.getNonSecurePort();
+            String ipAddress = registration.getHost();
+            int port = registration.getPort();
             ipPort = String.format("%s:%d", ipAddress, port);
         }
         return ipPort;
@@ -48,7 +48,7 @@ public class SocketControlImpl implements SocketControl {
 
     @Override
     public String getInstanceId() {
-        return registration.getInstanceConfig().getInstanceId();
+        return registration.getServiceId();
     }
 
     @Override
