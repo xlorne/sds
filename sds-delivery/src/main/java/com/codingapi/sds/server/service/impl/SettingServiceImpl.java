@@ -1,10 +1,10 @@
 package com.codingapi.sds.server.service.impl;
 
+import com.codingapi.sds.server.config.DeliveryConfig;
+import com.codingapi.sds.server.model.DeliveryModel;
 import com.codingapi.sds.server.service.RedisService;
 import com.codingapi.sds.server.service.SettingService;
-import com.codingapi.sds.server.model.DeliveryModel;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.client.serviceregistry.Registration;
@@ -31,13 +31,8 @@ public class SettingServiceImpl implements SettingService {
     @Autowired
     private Registration registration;
 
-
-    @Value("${delivery.port}")
-    private int deliveryPort;
-
-
-    @Value("${delivery.check.time}")
-    private int maxCheckTime;
+    @Autowired
+    private DeliveryConfig deliveryConfig;
 
 
     @Override
@@ -47,7 +42,7 @@ public class SettingServiceImpl implements SettingService {
 
     @Override
     public int getDeliveryPort() {
-        return deliveryPort;
+        return deliveryConfig.getPort();
     }
 
 
@@ -94,6 +89,6 @@ public class SettingServiceImpl implements SettingService {
 
     @Override
     public int getCheckTime() {
-        return maxCheckTime;
+        return deliveryConfig.getCheckTime();
     }
 }
