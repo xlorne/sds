@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.lorne.sds.server.DeliveryConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.codingapi.sds.server.DeliveryConfiguration
