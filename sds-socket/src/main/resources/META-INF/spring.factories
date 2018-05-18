@@ -1,1 +1,1 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.codingapi.sds.server.ServerConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=com.codingapi.sds.socket.ServerConfiguration

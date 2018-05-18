@@ -1,7 +1,7 @@
 package com.sds.demo.service.impl;
 
-import com.codingapi.sds.server.service.SocketControl;
-import com.codingapi.sds.server.service.SocketEventService;
+import com.codingapi.sds.socket.service.SocketControl;
+import com.codingapi.sds.socket.service.SocketEventService;
 import io.netty.channel.ChannelHandlerContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
